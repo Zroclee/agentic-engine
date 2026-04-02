@@ -107,31 +107,3 @@ MIT © [智擎团队]
 ## 🌟 致谢
 
 灵感来源于黄仁勋先生提出的 **Agentic as a Service** 以及 AI 驱动万物的愿景。
-```
-
----
-
-## 四、Logo 关键词（用于 AI 生成 Logo）
-
-> 您可以将以下关键词组合输入到 Midjourney、DALL·E、Leonardo.ai 等工具中：
-
-**核心关键词**（中英文均可）：
-
-- `智能引擎` `smart engine`
-- `齿轮` `gear`
-- `AI` `机器人` `robot head`
-- `闪电` `lightning`（代表速度、AI驱动）
-- `中枢/中台` `hub` `platform`
-- `对话气泡` `chat bubble`
-- `动态组件` `dynamic blocks`
-- `蓝色+银色` `blue and silver`（科技感）
-- `抽象几何` `abstract geometry`
-- `极简主义` `minimalist`
-
-**推荐提示词示例（英文）**：
-
-> `A logo for "AgenticEngine", a smart business platform with AI-driven interface. Combining a gear, a chat bubble, and a lightning bolt. Modern, minimal, tech style. Blue and silver colors. Vector flat design.`
-
-**中文提示词示例**：
-
-> `为“智擎中台”设计Logo，智能引擎主题，融合齿轮、闪电、对话气泡元素，科技蓝+银白色，极简扁平风格，适合SaaS产品。`
