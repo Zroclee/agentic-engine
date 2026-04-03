@@ -1,7 +1,9 @@
 import { NestFactory, Reflector } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { ValidationPipe } from './common/pipe/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +16,19 @@ async function bootstrap() {
 
   // 注册全局异常过滤器
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // 注册全局数据验证管道
+  app.useGlobalPipes(new ValidationPipe());
+
+  // 配置 Swagger API 文档
+  const config = new DocumentBuilder()
+    .setTitle('Agentic Engine Gateway API')
+    .setDescription('Gateway 接口文档')
+    .setVersion('1.0')
+    // .addBearerAuth()
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
 }
