@@ -51,18 +51,44 @@ pnpm install
 
 ### 配置环境变量
 
-复制 `.env.example` 到 `.env`，填写数据库、Redis、模型 API Key 等。
+复制 `.env.example` 到 `.env`（或在 `apps/gateway` 等目录下创建 `.env`），填写相关的环境变量。近期网关服务（gateway）新增了登录鉴权和 Prisma 数据库模块，需确保以下关键变量已配置：
+
+```env
+# 数据库配置 (PostgreSQL 连接字符串，供 Prisma 使用)
+DATABASE_URL="postgresql://user:password@localhost:5432/agentic_engine?schema=public"
+
+# JWT 鉴权密钥 (用于签发和验证登录 Token)
+JWT_SECRET="your-super-secret-jwt-key"
+
+# 服务端口 (可选，默认 3000)
+PORT=3000
+
+# Redis、模型 API Key 等其他配置...
+```
+
+### 数据库初始化
+
+网关服务 (gateway) 已接入 Prisma ORM。在首次启动服务前，请确保 PostgreSQL 数据库已启动，并执行以下命令同步数据库结构与生成 Client：
+
+```bash
+cd apps/gateway
+npx prisma generate
+npx prisma db push   # 若需生成迁移记录可使用 npx prisma migrate dev
+cd ../..
+```
 
 ### 启动服务
 
+项目基于 Turborepo 进行任务编排，您可以通过以下命令快速启动：
+
 ```bash
-# 开发模式（同时启动前端、后端、AI服务）
+# 开发模式（自动编排并启动所有前端、后端相关服务）
 pnpm dev
 
-# 或分别启动
-pnpm dev:web      # 前端 (http://localhost:5173)
-pnpm dev:server   # Node后端 (http://localhost:3000)
-pnpm dev:ai       # Python AI服务 (http://localhost:8000)
+# 或分别单独启动各个子应用
+pnpm web         # 启动前端应用
+pnpm gateway     # 启动后端网关服务 (http://localhost:3000)
+# pnpm dev:ai    # Python AI服务 (http://localhost:8000)
 ```
 
 ### 使用 Docker Compose（推荐）
