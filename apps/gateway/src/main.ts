@@ -5,6 +5,10 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ValidationPipe } from './common/pipe/validation.pipe';
 
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

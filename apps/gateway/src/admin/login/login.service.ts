@@ -3,6 +3,7 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../common/database';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -10,7 +11,10 @@ import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class LoginService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async register(dto: RegisterDto) {
     const { username, password, phone, email } = dto;
@@ -61,11 +65,16 @@ export class LoginService {
       throw new UnauthorizedException('用户名或密码错误');
     }
 
-    // 返回登录成功信息 (目前返回用户信息，后续可以扩展JWT)
+    // 签发 JWT
+    const payload = { sub: user.id, username: user.username };
+    const token = await this.jwtService.signAsync(payload);
+
+    // 返回登录成功信息和 Token
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...result } = user;
     return {
       message: '登录成功',
+      token,
       user: result,
     };
   }
