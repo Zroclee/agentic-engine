@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+// Admin Web Main Entry
 </script>
 
 <template>
-  <HelloWorld />
+  <router-view />
 </template>
