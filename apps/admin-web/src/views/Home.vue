@@ -1,39 +1,7 @@
 <template>
   <div class="min-h-screen bg-base-200 font-sans">
     <!-- Navbar 顶部导航 -->
-    <div class="navbar bg-base-100 shadow-sm fixed top-0 w-full z-50">
-      <div class="flex-1 px-4">
-        <a class="text-2xl font-bold text-primary flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          AgenticEngine
-        </a>
-      </div>
-      <div class="flex-none gap-2 px-4">
-        <ul class="menu menu-horizontal px-1 items-center">
-          <li><router-link to="/admin" class="font-medium hover:text-primary">后管系统</router-link></li>
-          <li><a href="#" class="font-medium hover:text-primary">AI聊天</a></li>
-          <li v-if="!appStore.userInfo">
-            <router-link to="/login" class="btn btn-primary btn-sm ml-4">登录</router-link>
-          </li>
-          <li v-else class="ml-4">
-            <div class="dropdown dropdown-end">
-              <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                <div class="w-8 rounded-full">
-                  <img alt="User Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
-              <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-                <li><a class="justify-between">个人信息</a></li>
-                <li><a>系统设置</a></li>
-                <li><a class="text-error" @click="handleLogout">退出登录</a></li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <Header :showNav="true" :fixed="true" />
 
     <!-- Hero Section -->
     <div class="hero min-h-[70vh] bg-base-200 mt-16">
@@ -144,19 +112,6 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useAppStore } from '../store/app'
+import Header from '../components/layout/Header.vue'
 
-const router = useRouter()
-const appStore = useAppStore()
-
-const handleLogout = async () => {
-  try {
-    await appStore.logout()
-    router.push('/login')
-  } catch (error) {
-    console.error('退出登录失败', error)
-    router.push('/login')
-  }
-}
 </script>

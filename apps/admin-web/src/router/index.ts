@@ -58,7 +58,7 @@ const router = createRouter({
 })
 
 // 白名单列表
-const whiteList = ['/login', '/regist', '/']
+const whiteList = ['/login', '/regist']
 
 router.beforeEach(async (to, _from) => {
   const appStore = useAppStore()
