@@ -11,10 +11,26 @@
         </a>
       </div>
       <div class="flex-none gap-2 px-4">
-        <ul class="menu menu-horizontal px-1">
+        <ul class="menu menu-horizontal px-1 items-center">
           <li><router-link to="/admin" class="font-medium hover:text-primary">后管系统</router-link></li>
           <li><a href="#" class="font-medium hover:text-primary">AI聊天</a></li>
-          <li><router-link to="/login" class="btn btn-primary btn-sm ml-4">登录</router-link></li>
+          <li v-if="!appStore.userInfo">
+            <router-link to="/login" class="btn btn-primary btn-sm ml-4">登录</router-link>
+          </li>
+          <li v-else class="ml-4">
+            <div class="dropdown dropdown-end">
+              <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="w-8 rounded-full">
+                  <img alt="User Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                </div>
+              </div>
+              <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+                <li><a class="justify-between">个人信息</a></li>
+                <li><a>系统设置</a></li>
+                <li><a class="text-error" @click="handleLogout">退出登录</a></li>
+              </ul>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -128,5 +144,19 @@
 </template>
 
 <script setup lang="ts">
-// 首页作为独立的宣传展示页
+import { useRouter } from 'vue-router'
+import { useAppStore } from '../store/app'
+
+const router = useRouter()
+const appStore = useAppStore()
+
+const handleLogout = async () => {
+  try {
+    await appStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('退出登录失败', error)
+    router.push('/login')
+  }
+}
 </script>

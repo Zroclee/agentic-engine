@@ -2,9 +2,11 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import JSEncrypt from 'jsencrypt';
-import { getPublicKey, login } from '../api/auth';
+import { getPublicKey } from '../api/auth';
+import { useAppStore } from '../store/app';
 
 const router = useRouter();
+const appStore = useAppStore();
 
 const username = ref('');
 const password = ref('');
@@ -38,8 +40,8 @@ const handleLogin = async () => {
       throw new Error('密码加密失败');
     }
 
-    // 3. 发送登录请求
-    const loginRes = await login({
+    // 3. 发送登录请求并同步用户信息
+    const loginRes = await appStore.login({
       username: username.value,
       password: encryptedPassword
     });

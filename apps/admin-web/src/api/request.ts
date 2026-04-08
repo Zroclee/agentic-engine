@@ -40,14 +40,15 @@ request.interceptors.response.use(
     // 返回实际的数据部分
     return res.data !== undefined ? res.data : res;
   },
-  (error: AxiosError) => {
+  (error: AxiosError<any>) => {
     // 超出 2xx 范围的状态码都会触发该函数
     console.error('API Error:', error.message);
     
     // 此处可统一处理 HTTP 错误状态码，如 401, 403, 500 等
-    // if (error.response?.status === 401) {
-    //   // 跳转登录页等逻辑
-    // }
+    if (error.response?.status === 401) {
+      alert(error.response.data?.message || '未授权，请先登录');
+      // 跳转登录页等逻辑
+    }
     
     return Promise.reject(error);
   }

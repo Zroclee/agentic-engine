@@ -25,7 +25,7 @@
           <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
             <li><a class="justify-between">个人信息</a></li>
             <li><a>系统设置</a></li>
-            <li><a class="text-error">退出登录</a></li>
+            <li><a class="text-error" @click="handleLogout">退出登录</a></li>
           </ul>
         </div>
       </div>
@@ -62,5 +62,20 @@
 </template>
 
 <script setup lang="ts">
-// 布局组件逻辑
+import { useRouter } from 'vue-router'
+import { useAppStore } from '../../store/app'
+
+const router = useRouter()
+const appStore = useAppStore()
+
+const handleLogout = async () => {
+  try {
+    await appStore.logout()
+    router.push('/login')
+  } catch (error) {
+    console.error('退出登录失败', error)
+    // 即使接口失败，也可以强制跳回登录页
+    router.push('/login')
+  }
+}
 </script>

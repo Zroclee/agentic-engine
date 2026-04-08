@@ -5,13 +5,16 @@ import {
   Body,
   UseInterceptors,
   Res,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { LoginService } from './login.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { RsaDecrypt } from '../../common/interceptors/rsa-decrypt.interceptor';
+import { JwtAuthGuard } from '../../common/auth';
 
 @ApiTags('Admin Login')
 @Controller('admin/auth')
@@ -60,5 +63,13 @@ export class LoginController {
       sameSite: 'lax',
     });
     return { message: '登出成功' };
+  }
+
+  @Get('info')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '获取当前登录用户信息' })
+  getUserInfo(@Req() req: Request) {
+    return req.user;
   }
 }
