@@ -24,11 +24,15 @@ const handleLogin = async () => {
   
   try {
     // 1. 获取公钥
-    const pubKeyRes = await getPublicKey();
-    const publicKey = pubKeyRes?.publicKey;
-    
-    if (!publicKey) {
-      throw new Error('获取公钥失败');
+    let publicKey = '';
+    try {
+      const pubKeyRes = await getPublicKey();
+      publicKey = pubKeyRes?.publicKey;
+      if (!publicKey) {
+        throw new Error('公钥为空');
+      }
+    } catch (err: any) {
+      throw new Error('获取公钥失败: ' + (err.message || '未知错误'));
     }
 
     // 2. 加密密码

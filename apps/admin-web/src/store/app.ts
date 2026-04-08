@@ -14,9 +14,9 @@ export const useAppStore = defineStore('app', {
         // 登录成功后，主动拉取一次用户信息以同步状态
         await this.fetchUserInfo();
         return res;
-      } catch (error) {
+      } catch (error: any) {
         console.error('登录失败', error);
-        throw error;
+        throw new Error(error.message || '登录失败');
       }
     },
 
@@ -24,9 +24,9 @@ export const useAppStore = defineStore('app', {
       try {
         await apiLogout();
         this.clearUserInfo();
-      } catch (error) {
+      } catch (error: any) {
         console.error('登出失败', error);
-        throw error;
+        throw new Error(error.message || '登出失败');
       }
     },
 
@@ -37,11 +37,11 @@ export const useAppStore = defineStore('app', {
         this.userInfo = res;
         this.isInitialized = true;
         return res;
-      } catch (error) {
+      } catch (error: any) {
         console.error('获取用户信息失败', error);
         this.userInfo = null;
         this.isInitialized = true;
-        throw error;
+        throw new Error(error.message || '获取用户信息失败');
       }
     },
 

@@ -31,9 +31,18 @@ request.interceptors.response.use(
     // 可根据后端约定的数据结构直接返回 data 部分
     const res = response.data;
     
-    // 示例：如果后端约定 code 为 0 表示成功，非 0 表示报错
+    // 后端统一返回 200 HTTP 状态码，通过 code 区分业务状态
     if (res.code !== undefined && res.code !== 200) {
-      // 假设 200 是成功，可以根据实际情况调整
+      // 统一处理 401 未授权等特定业务错误码
+      if (res.code === 401) {
+        alert(res.message || '未授权，请先登录');
+        // 跳转登录页等逻辑，例如：
+        // window.location.href = '/login';
+      } else {
+        // 其他错误可以统一弹窗提示，或者直接透传给业务层
+        console.error('业务异常:', res.message);
+      }
+      
       return Promise.reject(new Error(res.message || 'Error'));
     }
 
@@ -41,14 +50,8 @@ request.interceptors.response.use(
     return res.data !== undefined ? res.data : res;
   },
   (error: AxiosError<any>) => {
-    // 超出 2xx 范围的状态码都会触发该函数
+    // 由于后端无论如何都会返回 200，只有网络错误或跨域等情况才会走到这里
     console.error('API Error:', error.message);
-    
-    // 此处可统一处理 HTTP 错误状态码，如 401, 403, 500 等
-    if (error.response?.status === 401) {
-      alert(error.response.data?.message || '未授权，请先登录');
-      // 跳转登录页等逻辑
-    }
     
     return Promise.reject(error);
   }

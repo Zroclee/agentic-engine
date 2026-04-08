@@ -66,6 +66,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       timestamp: Date.now(),
     };
 
-    response.status(status).json(errorResponse);
+    // 无论什么异常，HTTP 状态码统一返回 200，靠业务 code 区分
+    response.status(HttpStatus.OK).json(errorResponse);
   }
 }
