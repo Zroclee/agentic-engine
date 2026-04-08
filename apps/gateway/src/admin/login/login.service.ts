@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../common/database';
+import { RsaService } from '../../common/auth/rsa.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcryptjs';
@@ -14,7 +15,13 @@ export class LoginService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private rsaService: RsaService,
   ) {}
+
+  getPublicKey() {
+    const publicKey = this.rsaService.getPublicKey();
+    return { publicKey };
+  }
 
   async register(dto: RegisterDto) {
     const { username, password, phone, email } = dto;

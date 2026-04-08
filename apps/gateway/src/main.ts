@@ -1,16 +1,22 @@
+import 'dotenv/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { ValidationPipe } from './common/pipe/validation.pipe';
-
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // 开启 CORS 并且允许携带凭证
+  app.enableCors({
+    origin: true, // 在生产环境中建议配置为具体的白名单域名，例如 'http://localhost:5173'
+    credentials: true,
+  });
+
+  app.use(cookieParser());
 
   // 注册全局响应拦截器
   // 注意: 对于 SSE 流式返回等特殊接口，如果需要跳过此统一格式化拦截器，

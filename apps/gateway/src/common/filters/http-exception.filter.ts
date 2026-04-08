@@ -46,7 +46,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
         `[${request.method}] ${request.url} - ${exception.message}`,
         exception.stack,
       );
-      message = exception.message;
+
+      // 对于生产环境或者系统内部错误，不要把详细的堆栈/数据库报错信息返回给前端
+      message =
+        process.env.NODE_ENV === 'production'
+          ? ResponseMessage.INTERNAL_SERVER_ERROR
+          : '服务器内部错误，请检查后端日志';
     }
 
     // 格式化错误信息为字符串

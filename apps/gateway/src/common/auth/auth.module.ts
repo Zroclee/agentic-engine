@@ -3,19 +3,22 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { DatabaseModule } from '../database';
+import { RsaService } from './rsa.service';
 
 @Global()
 @Module({
   imports: [
     DatabaseModule,
     PassportModule,
-    JwtModule.register({
+    JwtModule.registerAsync({
       global: true, // 全局注册 JwtModule，这样其他模块就不需要导入 JwtModule
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
+      useFactory: () => ({
+        secret: process.env.JWT_SECRET || 'your-secret-key',
+        signOptions: { expiresIn: '1d' },
+      }),
     }),
   ],
-  providers: [JwtStrategy],
-  exports: [JwtStrategy, PassportModule, JwtModule],
+  providers: [JwtStrategy, RsaService],
+  exports: [JwtStrategy, PassportModule, JwtModule, RsaService],
 })
 export class AuthModule {}

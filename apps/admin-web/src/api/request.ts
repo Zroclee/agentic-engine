@@ -5,6 +5,7 @@ const request: AxiosInstance = axios.create({
   // 本地环境 baseURL 为 /api，生产环境可根据实际情况通过环境变量配置
   baseURL: import.meta.env.VITE_BASE_URL || '/api',
   timeout: 10000, // 请求超时时间
+  withCredentials: true, // 允许携带 cookie
 });
 
 // 请求拦截器
@@ -31,11 +32,13 @@ request.interceptors.response.use(
     const res = response.data;
     
     // 示例：如果后端约定 code 为 0 表示成功，非 0 表示报错
-    // if (res.code !== 0) {
-    //   return Promise.reject(new Error(res.message || 'Error'));
-    // }
+    if (res.code !== undefined && res.code !== 200) {
+      // 假设 200 是成功，可以根据实际情况调整
+      return Promise.reject(new Error(res.message || 'Error'));
+    }
 
-    return res;
+    // 返回实际的数据部分
+    return res.data !== undefined ? res.data : res;
   },
   (error: AxiosError) => {
     // 超出 2xx 范围的状态码都会触发该函数
