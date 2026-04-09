@@ -14,7 +14,7 @@ import { RsaService } from './rsa.service';
       global: true, // 全局注册 JwtModule，这样其他模块就不需要导入 JwtModule
       useFactory: () => ({
         secret: process.env.JWT_SECRET || 'your-secret-key',
-        signOptions: { expiresIn: '15m' },
+        signOptions: { expiresIn: '1h' },
       }),
     }),
   ],

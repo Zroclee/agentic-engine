@@ -112,6 +112,21 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import Header from '@/components/layout/Header.vue'
+import { useAppStore } from '@/store/app'
 
+const appStore = useAppStore()
+
+onMounted(async () => {
+  // 如果用户信息未初始化（初次加载），尝试获取以恢复登录态
+  if (!appStore.isInitialized) {
+    try {
+      await appStore.fetchUserInfo()
+    } catch (error) {
+      // 未登录或 token 失效时静默处理即可，导航栏会保持未登录状态
+      console.log('未登录或登录态已失效')
+    }
+  }
+})
 </script>

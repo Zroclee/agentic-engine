@@ -35,7 +35,9 @@ request.interceptors.response.use(
     if (res.code !== undefined && res.code !== 200) {
       // 统一处理 401 未授权等特定业务错误码
       if (res.code === 401) {
-        alert(res.message || '未授权，请先登录');
+        // alert(res.message || '未授权，请先登录');
+        console.error('401 未授权:', res.message);
+
         // 跳转登录页等逻辑，例如：
         // window.location.href = '/login';
       } else {
