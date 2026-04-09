@@ -47,6 +47,23 @@ const routes: Array<RouteRecordRaw> = [
             component: () => import('../views/user-management/Permissions.vue')
           }
         ]
+      },
+      {
+        path: 'project-management',
+        name: 'ProjectManagement',
+        redirect: '/admin/project-management/projects',
+        children: [
+          {
+            path: 'projects',
+            name: 'Projects',
+            component: () => import('../views/project-management/Projects.vue')
+          },
+          {
+            path: 'agents',
+            name: 'Agents',
+            component: () => import('../views/project-management/Agents.vue')
+          }
+        ]
       }
     ]
   }

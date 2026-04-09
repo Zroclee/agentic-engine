@@ -8,19 +8,26 @@
       <!-- Sidebar 左侧侧边栏 (导航菜单) -->
       <aside class="w-64 bg-base-100 shadow-sm overflow-y-auto flex-none">
         <ul class="menu p-4 w-full text-base-content min-h-full">
-          <!-- 带有二级菜单的菜单组 -->
-          <li>
-            <details open>
+          <!-- 动态渲染菜单 -->
+          <li v-for="menu in menuList" :key="menu.title">
+            <!-- 带有二级菜单的菜单组 -->
+            <details v-if="menu.children && menu.children.length > 0" open>
               <summary>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                用户管理
+                <span v-if="menu.icon" v-html="menu.icon" class="inline-flex items-center justify-center"></span>
+                {{ menu.title }}
               </summary>
               <ul>
-                <li><router-link to="/admin/user-management/users" active-class="active">用户列表</router-link></li>
-                <li><router-link to="/admin/user-management/roles" active-class="active">角色管理</router-link></li>
-                <li><router-link to="/admin/user-management/permissions" active-class="active">权限管理</router-link></li>
+                <li v-for="child in menu.children" :key="child.path">
+                  <router-link :to="child.path!" active-class="active">{{ child.title }}</router-link>
+                </li>
               </ul>
             </details>
+            
+            <!-- 一级菜单 -->
+            <router-link v-else :to="menu.path!" active-class="active">
+              <span v-if="menu.icon" v-html="menu.icon" class="inline-flex items-center justify-center"></span>
+              {{ menu.title }}
+            </router-link>
           </li>
         </ul>
       </aside>
@@ -34,5 +41,33 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import Header from '@/components/layout/Header.vue'
+
+interface Menu {
+  title: string
+  path?: string
+  icon?: string
+  children?: Menu[]
+}
+
+const menuList = ref<Menu[]>([
+  {
+    title: '用户管理',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>',
+    children: [
+      { title: '用户列表', path: '/admin/user-management/users' },
+      { title: '角色管理', path: '/admin/user-management/roles' },
+      { title: '权限管理', path: '/admin/user-management/permissions' }
+    ]
+  },
+  {
+    title: '项目管理',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>',
+    children: [
+      { title: '项目管理页面', path: '/admin/project-management/projects' },
+      { title: '智能体管理页面', path: '/admin/project-management/agents' }
+    ]
+  }
+])
 </script>
