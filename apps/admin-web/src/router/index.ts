@@ -1,9 +1,9 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
-import Layout from '../components/layout/Layout.vue'
-import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
-import Regist from '../views/Regist.vue'
-import { useAppStore } from '../store/app'
+import Layout from '@/components/layout/Layout.vue'
+import Home from '@/views/Home.vue'
+import Login from '@/views/Login.vue'
+import Regist from '@/views/Regist.vue'
+import { useAppStore } from '@/store/app'
 
 const routes: Array<RouteRecordRaw> = [
   {

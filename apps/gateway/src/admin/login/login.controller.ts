@@ -13,8 +13,8 @@ import { LoginService } from './login.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { RsaDecrypt } from '../../common/interceptors/rsa-decrypt.interceptor';
-import { JwtAuthGuard } from '../../common/auth';
+import { RsaDecrypt } from '@/common/interceptors/rsa-decrypt.interceptor';
+import { JwtAuthGuard } from '@/common/auth';
 
 @ApiTags('Admin Login')
 @Controller('admin/auth')
@@ -48,7 +48,7 @@ export class LoginController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 24 * 60 * 60 * 1000, // 1天
+      maxAge: 15 * 60 * 1000, // 15分钟
     });
 
     return result;

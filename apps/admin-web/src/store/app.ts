@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getUserInfo, login as apiLogin, logout as apiLogout, type UserInfoResponse, type LoginParams } from '../api/auth';
+import { getUserInfo, login as apiLogin, logout as apiLogout, type UserInfoResponse, type LoginParams } from '@/api/auth';
 
 export const useAppStore = defineStore('app', {
   state: () => ({

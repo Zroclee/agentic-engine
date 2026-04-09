@@ -14,12 +14,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         },
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
-      ignoreExpiration: false,
+      ignoreExpiration: true,
       secretOrKey: process.env.JWT_SECRET || 'your-secret-key',
     });
   }
 
-  async validate(payload: { sub: string; username: string }) {
+  async validate(payload: { sub: string; username: string; exp?: number }) {
+    if (payload.exp && payload.exp * 1000 < Date.now()) {
+      throw new UnauthorizedException('登录已过期请重新登录');
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
     });

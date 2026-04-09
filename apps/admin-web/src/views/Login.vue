@@ -2,8 +2,8 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import JSEncrypt from 'jsencrypt';
-import { getPublicKey } from '../api/auth';
-import { useAppStore } from '../store/app';
+import { getPublicKey } from '@/api/auth';
+import { useAppStore } from '@/store/app';
 
 const router = useRouter();
 const appStore = useAppStore();
