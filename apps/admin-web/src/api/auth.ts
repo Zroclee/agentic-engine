@@ -4,6 +4,13 @@ export interface PublicKeyResponse {
   publicKey: string;
 }
 
+export interface RegisterParams {
+  username: string;
+  password?: string;
+  phone?: string;
+  email?: string;
+}
+
 export interface LoginParams {
   username: string;
   password?: string;
@@ -36,6 +43,13 @@ export function getPublicKey() {
  */
 export function login(data: LoginParams) {
   return request.post<any, LoginResponse>('/admin/auth/login', data);
+}
+
+/**
+ * 管理员注册
+ */
+export function register(data: RegisterParams) {
+  return request.post<any, any>('/admin/auth/register', data);
 }
 
 /**

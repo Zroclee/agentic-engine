@@ -13,11 +13,41 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  username  String   @unique
-  password  String
-  phone     String?
-  email     String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  username  String   @unique @db.VarChar(64)
+  password  String   @db.VarChar(255)
+  phone     String?  @db.VarChar(20)
+  email     String?  @db.VarChar(128)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("create_time")
+  updatedAt DateTime @updatedAt @map("update_time")
+
+  roles UserRole[]
+
+  @@map("user")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  roleCode    String   @unique @map("role_code") @db.VarChar(64)
+  roleName    String   @map("role_name") @db.VarChar(64)
+  description String?  @db.VarChar(255)
+  status      Int      @default(1) @db.SmallInt // 0-禁用，1-启用
+  createdAt   DateTime @default(now()) @map("create_time")
+  updatedAt   DateTime @updatedAt @map("update_time")
+
+  users UserRole[]
+
+  @@map("role")
+}
+
+model UserRole {
+  userId    String   @map("user_id")
+  roleId    Int      @map("role_id")
+  createdAt DateTime @default(now()) @map("create_time")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_role")
 }

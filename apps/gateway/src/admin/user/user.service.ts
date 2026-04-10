@@ -34,6 +34,16 @@ export class UserService {
           isActive: true,
           createdAt: true,
           updatedAt: true,
+          roles: {
+            select: {
+              role: {
+                select: {
+                  roleCode: true,
+                  roleName: true,
+                },
+              },
+            },
+          },
         },
         orderBy: {
           createdAt: 'desc',
@@ -42,15 +52,22 @@ export class UserService {
     ]);
 
     // 对手机号进行掩码处理 (保留前3位和后4位，中间4位替换为*)
-    const maskedList = list.map((user) => ({
-      ...user,
+    // 提取并扁平化角色信息
+    const mappedList = list.map((user) => ({
+      id: user.id,
+      username: user.username,
       phone: user.phone
         ? user.phone.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2')
         : user.phone,
+      email: user.email,
+      isActive: user.isActive,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      roles: user.roles.map((ur) => ur.role),
     }));
 
     return {
-      list: maskedList,
+      list: mappedList,
       total,
       page,
       pageSize,

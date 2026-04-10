@@ -24,13 +24,13 @@
           <!-- head -->
           <thead>
             <tr>
-              <th>序号</th>
-              <th>用户名</th>
-              <th>手机号</th>
-              <th>邮箱</th>
-              <th>角色</th>
-              <th>状态</th>
-              <th>操作</th>
+              <th class="min-w-[60px]">序号</th>
+              <th class="min-w-[120px]">用户名</th>
+              <th class="min-w-[120px]">手机号</th>
+              <th class="min-w-[180px]">邮箱</th>
+              <th class="min-w-[160px]">角色</th>
+              <th class="min-w-[80px]">状态</th>
+              <th class="min-w-[120px]">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -40,7 +40,10 @@
               <td>{{ user.phone || '-' }}</td>
               <td>{{ user.email || '-' }}</td>
               <td>
-                <span class="badge badge-ghost">普通用户</span>
+                <span v-if="user.roles && user.roles.length > 0" class="badge badge-ghost">
+                  {{ user.roles.map(r => r.roleName).join(', ') }}
+                </span>
+                <span v-else class="text-gray-400">-</span>
               </td>
               <td>
                 <div class="badge" :class="user.isActive ? 'badge-success text-white' : 'badge-error text-white'">

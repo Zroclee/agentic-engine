@@ -68,14 +68,20 @@ PORT=3000
 
 ### 数据库初始化
 
-网关服务 (gateway) 已接入 Prisma ORM。在首次启动服务前，请确保 PostgreSQL 数据库已启动，并执行以下命令同步数据库结构与生成 Client：
+网关服务 (gateway) 已接入 Prisma ORM。在首次启动服务前，请确保 PostgreSQL 数据库已启动，并执行以下命令同步数据库结构、生成 Client 以及初始化默认账号数据：
 
 ```bash
 cd apps/gateway
 npx prisma generate
-npx prisma db push   # 若需生成迁移记录可使用 npx prisma migrate dev
+npx prisma migrate dev  # 执行数据库迁移并自动运行 seed 脚本
+# 如果需要重置数据库和重新填充数据，可运行：
+# npx prisma migrate reset --force
 cd ../..
 ```
+
+**默认初始账号信息**
+- 用户名：`admin`
+- 密码：`123456`
 
 ### 启动服务
 
