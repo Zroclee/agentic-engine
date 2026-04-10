@@ -1,4 +1,5 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig, type AxiosResponse, AxiosError } from 'axios';
+import { Message } from '@/components/Message';
 
 // 创建 axios 实例
 const request: AxiosInstance = axios.create({
@@ -35,7 +36,7 @@ request.interceptors.response.use(
     if (res.code !== undefined && res.code !== 200) {
       // 统一处理 401 未授权等特定业务错误码
       if (res.code === 401) {
-        // alert(res.message || '未授权，请先登录');
+        Message.error(res.message || '未授权，请先登录');
         console.error('401 未授权:', res.message);
 
         // 跳转登录页等逻辑，例如：

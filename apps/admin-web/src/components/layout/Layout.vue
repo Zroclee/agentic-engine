@@ -11,20 +11,20 @@
           <!-- 动态渲染菜单 -->
           <li v-for="menu in menuList" :key="menu.title">
             <!-- 带有二级菜单的菜单组 -->
-            <details v-if="menu.children && menu.children.length > 0" open>
-              <summary>
+            <details v-if="menu.children && menu.children.length > 0" :open="isGroupActive(menu)">
+              <summary :class="{ 'bg-base-200 font-medium': isGroupActive(menu) }">
                 <span v-if="menu.icon" v-html="menu.icon" class="inline-flex items-center justify-center"></span>
                 {{ menu.title }}
               </summary>
               <ul>
                 <li v-for="child in menu.children" :key="child.path">
-                  <router-link :to="child.path!" active-class="active">{{ child.title }}</router-link>
+                  <router-link :to="child.path!" active-class="menu-active">{{ child.title }}</router-link>
                 </li>
               </ul>
             </details>
             
             <!-- 一级菜单 -->
-            <router-link v-else :to="menu.path!" active-class="active">
+            <router-link v-else :to="menu.path!" active-class="menu-active">
               <span v-if="menu.icon" v-html="menu.icon" class="inline-flex items-center justify-center"></span>
               {{ menu.title }}
             </router-link>
@@ -42,13 +42,23 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import Header from '@/components/layout/Header.vue'
+
+const route = useRoute()
 
 interface Menu {
   title: string
   path?: string
   icon?: string
   children?: Menu[]
+}
+
+const isGroupActive = (menu: Menu) => {
+  if (menu.children) {
+    return menu.children.some(child => child.path && route.path.startsWith(child.path))
+  }
+  return false
 }
 
 const menuList = ref<Menu[]>([
