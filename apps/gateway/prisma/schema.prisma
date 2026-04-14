@@ -21,7 +21,8 @@ model User {
   createdAt DateTime @default(now()) @map("create_time")
   updatedAt DateTime @updatedAt @map("update_time")
 
-  roles UserRole[]
+  roles    UserRole[]
+  projects Project[]
 
   @@map("user")
 }
@@ -51,3 +52,31 @@ model UserRole {
   @@id([userId, roleId])
   @@map("user_role")
 }
+
+// 认证类型枚举
+enum AuthType {
+  NONE
+  API_KEY
+  DYNAMIC_TOKEN
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(128)
+  description String?  @db.Text
+  authType    AuthType @default(NONE) @map("auth_type")
+  // 核心：将认证所需的所有敏感信息序列化为 JSON 后进行 AES-256-GCM 强加密。
+  // - API_KEY 存储: { "key": "sk-xxx", "position": "header", "keyName": "Authorization" }
+  // - DYNAMIC_TOKEN 存储: { "secret": "xxx", "tokenUrl": "https://...", "tokenPath": "data.token" }
+  authConfig  String?  @map("auth_config") @db.Text 
+  
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now()) @map("create_time")
+  updatedAt   DateTime @updatedAt @map("update_time")
+
+  @@map("project")
+}
+
+

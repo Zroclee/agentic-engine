@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../../common/auth';
+import { JwtAuthGuard } from '@/common/auth';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UserQueryDto } from './dto/user-query.dto';
 
