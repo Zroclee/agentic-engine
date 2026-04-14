@@ -23,6 +23,7 @@ model User {
 
   roles    UserRole[]
   projects Project[]
+  llms     Llm[]
 
   @@map("user")
 }
@@ -77,6 +78,23 @@ model Project {
   updatedAt   DateTime @updatedAt @map("update_time")
 
   @@map("project")
+}
+
+model Llm {
+  id        String   @id @default(uuid())
+  provider  String   @db.VarChar(64) // 供应商，如 openai, anthropic, deepseek
+  name      String   @db.VarChar(128) // 模型名称，如 GPT-4, DeepSeek-V3
+  baseUrl   String?  @map("base_url") @db.VarChar(255) // 自定义代理地址
+  apiKey    String   @map("api_key") @db.Text // 必须使用 AES-256-GCM 加密存储，密文较长故用 Text
+  isPublic  Boolean  @default(false) @map("is_public") // 是否为公共模型（仅超级管理员可设为 true）
+
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("create_time")
+  updatedAt DateTime @updatedAt @map("update_time")
+
+  @@map("llm")
 }
 
 

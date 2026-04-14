@@ -49,6 +49,18 @@ const routes: Array<RouteRecordRaw> = [
         ]
       },
       {
+        path: 'llm-management',
+        name: 'LlmManagement',
+        redirect: '/admin/llm-management/llms',
+        children: [
+          {
+            path: 'llms',
+            name: 'Llms',
+            component: () => import('../views/llm-management/Llms.vue')
+          }
+        ]
+      },
+      {
         path: 'project-management',
         name: 'ProjectManagement',
         redirect: '/admin/project-management/projects',

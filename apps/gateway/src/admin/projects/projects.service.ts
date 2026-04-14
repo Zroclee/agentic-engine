@@ -9,65 +9,16 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectQueryDto } from './dto/project-query.dto';
 import { TestAuthDto } from './dto/test-auth.dto';
-import * as crypto from 'crypto';
+import { CryptoUtil } from '@/common/utils/crypto.util';
 
 @Injectable()
 export class ProjectsService {
-  private readonly algorithm = 'aes-256-gcm';
-  // 在实际生产中，请确保将此密钥存储在环境变量中
-  private readonly secretKey =
-    process.env.ENCRYPTION_KEY || '0123456789abcdef0123456789abcdef';
-
   constructor(private prisma: PrismaService) {}
-
-  // 加密方法
-  private encrypt(text: string): string {
-    if (!text) return text;
-    try {
-      const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipheriv(
-        this.algorithm,
-        Buffer.from(this.secretKey, 'utf8'),
-        iv,
-      );
-      let encrypted = cipher.update(text, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
-      const authTag = cipher.getAuthTag().toString('hex');
-      return `${iv.toString('hex')}:${authTag}:${encrypted}`;
-    } catch (e) {
-      console.error('Encryption failed', e);
-      throw new BadRequestException('加密配置失败');
-    }
-  }
-
-  // 解密方法
-  private decrypt(hash: string): string {
-    if (!hash) return hash;
-    try {
-      const parts = hash.split(':');
-      if (parts.length !== 3) return hash;
-      const iv = Buffer.from(parts[0], 'hex');
-      const authTag = Buffer.from(parts[1], 'hex');
-      const encryptedText = Buffer.from(parts[2], 'hex');
-      const decipher = crypto.createDecipheriv(
-        this.algorithm,
-        Buffer.from(this.secretKey, 'utf8'),
-        iv,
-      );
-      decipher.setAuthTag(authTag);
-      let decrypted = decipher.update(encryptedText).toString('utf8');
-      decrypted += decipher.final('utf8');
-      return decrypted;
-    } catch (e) {
-      console.error('Decryption failed', e);
-      throw new BadRequestException('解密配置失败');
-    }
-  }
 
   async create(createProjectDto: CreateProjectDto, userId: string) {
     const { name, description, authType, authConfig } = createProjectDto;
 
-    const encryptedConfig = authConfig ? this.encrypt(authConfig) : null;
+    const encryptedConfig = authConfig ? CryptoUtil.encrypt(authConfig) : null;
 
     return this.prisma.project.create({
       data: {
@@ -193,7 +144,7 @@ export class ProjectsService {
     // 如果有新传 authConfig，就重新加密覆盖，否则保留原有
     let encryptedConfig = project.authConfig;
     if (authConfig !== undefined) {
-      encryptedConfig = authConfig ? this.encrypt(authConfig) : null;
+      encryptedConfig = authConfig ? CryptoUtil.encrypt(authConfig) : null;
     }
 
     return this.prisma.project.update({

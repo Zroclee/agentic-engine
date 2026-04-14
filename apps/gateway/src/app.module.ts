@@ -7,6 +7,7 @@ import { LoginModule } from './admin/login/login.module';
 import { UserModule } from './admin/user/user.module';
 import { RolesModule } from './admin/roles/roles.module';
 import { ProjectsModule } from './admin/projects/projects.module';
+import { LlmsModule } from './admin/llms/llms.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ProjectsModule } from './admin/projects/projects.module';
     UserModule,
     RolesModule,
     ProjectsModule,
+    LlmsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

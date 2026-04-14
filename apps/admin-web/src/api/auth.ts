@@ -29,6 +29,7 @@ export interface UserInfoResponse {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  roles?: { roleCode: string }[];
 }
 
 /**
