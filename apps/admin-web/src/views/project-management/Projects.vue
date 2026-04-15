@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { 
   getProjectList, 
   getProjectDetail,
@@ -19,6 +19,10 @@ const queryParams = ref<ProjectListParams>({
   page: 1,
   pageSize: 10,
   keyword: ''
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(total.value / (queryParams.value.pageSize || 10));
 });
 
 // 获取项目列表
@@ -128,91 +132,97 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-6">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">项目管理</h2>
-      <button class="btn btn-primary" @click="handleAdd">新建项目</button>
-    </div>
-    
-    <!-- 搜索区域 -->
-    <div class="flex mb-4 gap-2">
-      <input 
-        v-model="queryParams.keyword" 
-        type="text" 
-        placeholder="搜索项目名称" 
-        class="input input-bordered w-full max-w-xs" 
-        @keyup.enter="handleSearch"
-      />
-      <button class="btn btn-square btn-ghost" @click="handleSearch">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-      </button>
-    </div>
+  <div class="card bg-base-100 shadow-sm w-full">
+    <div class="card-body">
+      <!-- Header & Actions -->
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="card-title text-xl">项目管理</h2>
+        <button class="btn btn-primary btn-sm" @click="handleAdd">新建项目</button>
+      </div>
+      
+      <!-- 搜索栏 -->
+      <div class="flex gap-4 mb-4">
+        <input 
+          v-model="queryParams.keyword" 
+          @keyup.enter="handleSearch"
+          type="text" 
+          placeholder="搜索项目名称..." 
+          class="input input-bordered input-sm w-full max-w-xs" 
+        />
+        <button @click="handleSearch" class="btn btn-sm btn-outline">查询</button>
+      </div>
 
-    <!-- 表格区域 -->
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body p-0">
-        <div class="overflow-x-auto">
-          <table class="table w-full">
-            <thead class="bg-base-200">
-              <tr>
-                <th>项目名称</th>
-                <th>认证方式</th>
-                <th>创建人</th>
-                <th>创建时间</th>
-                <th class="text-right">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="loading">
-                <td colspan="5" class="text-center py-8">
-                  <span class="loading loading-spinner loading-md text-primary"></span>
-                </td>
-              </tr>
-              <tr v-else-if="projectList.length === 0">
-                <td colspan="5" class="text-center text-gray-500 py-8">暂无数据</td>
-              </tr>
-              <tr v-else v-for="item in projectList" :key="item.id" class="hover">
-                <td>
-                  <div class="font-bold">{{ item.name }}</div>
-                  <div class="text-sm opacity-50 truncate max-w-xs" v-if="item.description">{{ item.description }}</div>
-                </td>
-                <td>
-                  <div class="badge" 
-                    :class="{
-                      'badge-neutral': item.authType === 'NONE',
-                      'badge-primary badge-outline': item.authType === 'API_KEY',
-                      'badge-secondary badge-outline': item.authType === 'DYNAMIC_TOKEN'
-                    }">
-                    {{ translateAuthType(item.authType) }}
-                  </div>
-                </td>
-                <td>{{ item.user?.username || '-' }}</td>
-                <td>{{ formatDate(item.createdAt) }}</td>
-                <td class="text-right">
-                  <button class="btn btn-sm btn-ghost text-info" @click="handleEdit(item.id)">编辑</button>
-                  <button class="btn btn-sm btn-ghost text-error" @click="handleDelete(item.id, item.name)">删除</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <!-- 表格区域 -->
+      <div class="overflow-x-auto">
+        <table class="table w-full">
+          <!-- head -->
+          <thead>
+            <tr>
+              <th>项目名称</th>
+              <th>认证方式</th>
+              <th>创建人</th>
+              <th>创建时间</th>
+              <th class="text-right">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in projectList" :key="item.id" class="hover">
+              <td>
+                <div class="font-medium">{{ item.name }}</div>
+                <div class="text-sm opacity-50 truncate max-w-xs" v-if="item.description">{{ item.description }}</div>
+              </td>
+              <td>
+                <div class="badge" 
+                  :class="{
+                    'badge-neutral': item.authType === 'NONE',
+                    'badge-primary text-white': item.authType === 'API_KEY',
+                    'badge-secondary text-white': item.authType === 'DYNAMIC_TOKEN'
+                  }">
+                  {{ translateAuthType(item.authType) }}
+                </div>
+              </td>
+              <td>{{ item.user?.username || '-' }}</td>
+              <td>{{ formatDate(item.createdAt) }}</td>
+              <td class="text-right">
+                <button class="btn btn-xs btn-info text-white mr-2" @click="handleEdit(item.id)">编辑</button>
+                <button class="btn btn-xs btn-error text-white" @click="handleDelete(item.id, item.name)">删除</button>
+              </td>
+            </tr>
+            <!-- 无数据展示 -->
+            <tr v-if="projectList.length === 0 && !loading">
+              <td colspan="5" class="text-center text-gray-500 py-4">暂无数据</td>
+            </tr>
+            <tr v-if="loading">
+              <td colspan="5" class="text-center text-gray-500 py-4">加载中...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
         
-        <!-- 分页 -->
-        <div class="flex justify-between items-center p-4 border-t border-base-200" v-if="total > 0">
-          <span class="text-sm text-gray-500">共 {{ total }} 条记录</span>
-          <div class="join">
-            <button 
-              class="join-item btn btn-sm" 
-              :disabled="queryParams.page <= 1"
-              @click="handlePageChange(queryParams.page - 1)"
-            >«</button>
-            <button class="join-item btn btn-sm">第 {{ queryParams.page }} 页</button>
-            <button 
-              class="join-item btn btn-sm" 
-              :disabled="queryParams.page * queryParams.pageSize >= total"
-              @click="handlePageChange(queryParams.page + 1)"
-            >»</button>
-          </div>
+      <!-- 分页占位 -->
+      <div class="flex justify-end mt-4" v-if="total > 0">
+        <div class="join">
+          <button 
+            class="join-item btn btn-sm" 
+            :disabled="queryParams.page === 1"
+            @click="handlePageChange(queryParams.page - 1)"
+          >«</button>
+          
+          <button 
+            v-for="p in totalPages" 
+            :key="p"
+            class="join-item btn btn-sm" 
+            :class="{ 'btn-active': p === queryParams.page }"
+            @click="handlePageChange(p)"
+          >
+            {{ p }}
+          </button>
+          
+          <button 
+            class="join-item btn btn-sm"
+            :disabled="queryParams.page === totalPages"
+            @click="handlePageChange(queryParams.page + 1)"
+          >»</button>
         </div>
       </div>
     </div>

@@ -8,6 +8,7 @@ import { UserModule } from './admin/user/user.module';
 import { RolesModule } from './admin/roles/roles.module';
 import { ProjectsModule } from './admin/projects/projects.module';
 import { LlmsModule } from './admin/llms/llms.module';
+import { AgentModule } from './admin/agent/agent.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LlmsModule } from './admin/llms/llms.module';
     RolesModule,
     ProjectsModule,
     LlmsModule,
+    AgentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
